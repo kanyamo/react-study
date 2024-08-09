@@ -35,6 +35,7 @@ paginate: true
 
 - 何か質問があれば、遠慮なくどうぞ
 - 詰め込みすぎて、理解しづらい部分があるかもしれません
+- 発表者も詳しくない部分があるかもしれません
 
 ---
 
@@ -55,7 +56,7 @@ ReactはJavaScriptのライブラリだが、TypeScriptと組み合わせて使�
 ## なぜReactとTypeScriptを組み合わせるのか
 
 1. 型安全性
-   - プロップスやステートの型チェック
+   - PropsやStateの型チェック
    - コンパイル時のエラー検出
 
 2. 開発者体験の向上
@@ -1333,7 +1334,7 @@ const Example: React.FC = () => (
 
 ## Styled-componentsとTypeScript
 
-Styled-componentsはTypeScriptと相性が良く、型安全なスタイリングが可能です。
+Styled-componentsはTypeScriptと相性が良く、型安全なスタイリングが可能
 
 ```tsx
 import styled from 'styled-components';
@@ -1414,8 +1415,6 @@ const Button: React.FC = ({ children }) => (
 Tailwind CSSは、ユーティリティファーストのCSSフレームワークで、事前定義されたクラスを使用してスタイリングを行う
 
 ```tsx
-// Tailwind CSSを使用する場合、まずプロジェクトにTailwindをセットアップする必要がある
-
 const Button: React.FC = ({ children }) => (
   <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
     {children}
@@ -1425,6 +1424,49 @@ const Button: React.FC = ({ children }) => (
 
 ### Tailwind CSSとTypeScriptを組み合わせる場合
 - 追加の型定義は必要ないが、クラス名の自動補完のためにVSCode拡張機能を使用すると便利
+
+---
+
+## Tailwind CSSの複雑なスタイリング
+
+Bootstrapと違い動的にスタイルシートを生成するため、複雑なスタイリングも可能
+
+```tsx
+import React from 'react';
+
+const ComplexStylingExample: React.FC = () => {
+  return (
+    <div className="p-4 bg-gray-100">
+      <h1 className="text-2xl font-bold mb-4">Complex Tailwind CSS Styling</h1>
+      
+      {/* List with complex styling */}
+      <ul className="space-y-4">
+        {[1, 2, 3, 4, 5].map((item) => (
+          <li
+            key={item}
+            className={`
+              relative
+              ...  // 他のクラス名
+              
+              /* スマートフォン表示で3n+1番目の要素にホバー時のafter疑似要素のスタイル */
+              sm:nth-child(3n+1):hover:after:content-['']
+              sm:nth-child(3n+1):hover:after:absolute
+              ...  // 他のクラス名
+            `}
+          >
+            <h2 className="text-lg font-semibold mb-2">Item {item}</h2>
+            <p className="text-gray-600">
+              This is a complex styled item using Tailwind CSS.
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default ComplexStylingExample;
+```
 
 ---
 
@@ -1451,7 +1493,7 @@ const Button: React.FC = ({ children }) => (
 
 ## メモ化（React.memo, useMemo, useCallback）
 
-メモ化は不要な再レンダリングを防ぐ重要なテクニックです。
+メモ化は不要な再レンダリングを防ぐ重要なテクニック
 
 ```tsx
 import React, { useMemo, useCallback } from 'react';
@@ -1521,7 +1563,7 @@ const App: React.FC = () => {
 
 ## コード分割とLazy Loading
 
-React.lazyとSuspenseを使用して、コンポーネントを動的にインポートし、アプリケーションの初期ロード時間を改善できます。
+React.lazyとSuspenseを使用して、コンポーネントを動的にインポートし、アプリケーションの初期ロード時間を改善できる
 
 ```tsx
 import React, { Suspense } from 'react';
@@ -1544,7 +1586,7 @@ const App: React.FC = () => {
 
 ## ビルトインのプロファイラの使用
 
-React DevToolsには、コンポーネントの再レンダリングを分析するためのプロファイラが含まれています。
+React DevToolsには、コンポーネントの再レンダリングを分析するためのプロファイラが含まれている
 
 1. React DevToolsをインストール
 2. 開発者ツールでProfilerタブを選択
@@ -1615,7 +1657,7 @@ describe('Button', () => {
 
 ## カスタムフックのテスト
 
-カスタムフックは、`renderHook`を使用してテストできます。
+カスタムフックは、`renderHook`を使用してテスト
 
 ```tsx
 // useCounter.ts
@@ -1663,6 +1705,8 @@ describe('useCounter', () => {
 - Reactベースのフルスタックフレームワーク
 - 簡単に言うと、Reactにサーバー機能を追加したもの
 
+### 主な機能
+
 1. ファイルベースのルーティング
 2. サーバーサイドレンダリング（SSR）
 3. 静的サイト生成（SSG）
@@ -1705,47 +1749,106 @@ export default About;
 
 ## データフェッチング
 
-Next.jsは複数のデータフェッチング方法を提供します：
+Next.jsは複数のデータフェッチング方法を提供する:
 
-1. getStaticProps (Static Site Generation)
-2. getServerSideProps (Server-Side Rendering)
-3. getStaticPaths (Dynamic Routes for SSG)
+1. getStaticProps (静的サイト生成)
+2. getServerSideProps (サーバーサイドレンダリング)
+3. getStaticPaths (SSGの動的ルート)
 
 ---
 
-## データフェッチの例：getServerSideProps
+## 1. getStaticProps (SSG)
 
-```tsx
-import { GetStaticProps, NextPage } from 'next';
+- ビルド時にデータをフェッチしてページを生成
+- 特徴:
+  - ビルド時にHTMLが生成される
+  - 高速なページロード
+  - SEOに有利
+  - データ更新頻度が低いページに適している
 
-interface PostProps {
-  title: string;
-  content: string;
-}
+---
 
-const Post: NextPage<PostProps> = ({ title, content }) => {
-  return (
-    <div>
-      <h1>{title}</h1>
-      <p>{content}</p>
-    </div>
-  );
-};
+## getStaticProps の使用例
 
-export const getStaticProps: GetStaticProps = async () => {
-  // 通常はここで外部APIやデータベースからデータを取得する
-  const post = {
-    title: 'My First Post',
-    content: 'This is the content of my first post.'
-  };
+```typescript
+export async function getStaticProps() {
+  const res = await fetch('https://api.example.com/data')
+  const data = await res.json()
 
   return {
-    props: post
-  };
-};
-
-export default Post;
+    props: { data },
+    revalidate: 60, // オプション：60秒ごとに再生成
+  }
+}
 ```
+
+---
+
+## 2. getServerSideProps (SSR)
+
+- リクエストごとにサーバーサイドでデータをフェッチ
+- 特徴:
+  - リクエストのたびにデータがフェッチされる
+  - 常に最新のデータを表示できる
+  - サーバーの負荷が高くなる可能性がある
+  - 初期ロードが遅くなる可能性がある
+
+---
+
+## getServerSideProps の使用例
+
+```typescript
+export async function getServerSideProps(context) {
+  const { params, req, res } = context
+  const { id } = params
+
+  const response = await fetch(`https://api.example.com/data/${id}`)
+  const data = await response.json()
+
+  return { props: { data } }
+}
+```
+
+---
+
+## 3. getStaticPaths (SSGの動的ルート)
+
+- 動的ルーティングを使用する静的生成ページのためのメソッド
+- 特徴:
+  - 動的ルートを持つページで使用
+  - getStaticPropsと組み合わせて使用
+  - ビルド時に指定されたパスの静的ページを生成
+
+---
+
+## getStaticPaths の使用例
+
+```typescript
+export async function getStaticPaths() {
+  const res = await fetch('https://api.example.com/posts')
+  const posts = await res.json()
+
+  const paths = posts.map((post) => ({
+    params: { id: post.id.toString() },
+  }))
+
+  return { paths, fallback: false }
+}
+
+export async function getStaticProps({ params }) {
+  const res = await fetch(`https://api.example.com/posts/${params.id}`)
+  const post = await res.json()
+
+  return { props: { post } }
+}
+```
+
+---
+
+## `getStaticProps` vs `getServerSideProps`
+
+- 静的コンテンツや更新頻度が低いページ → getStaticProps
+- ユーザー固有データや頻繁に更新されるデータ → getServerSideProps
 
 ---
 
@@ -1771,5 +1874,162 @@ export default Post;
 2. 状態管理ライブラリの探求（Redux, MobX, Recoil等）
 3. GraphQLの学習とApollo Clientの使用
 4. マイクロフロントエンドアーキテクチャの探求
-5. CI/CDパイプラインの構築
-6. アクセシビリティ（a11y）への取り組み
+5. CI/CDの構築
+6. アクセシビリティ（a11y）, 多言語化（i18n）
+
+**多分実際に何か作ってみるのが一番効率的！！**
+
+---
+
+本来はここで終わっても良かったのだが、もう少しReact.jsとTypeScriptについて深く学びたい方向けに、次のスライドに進みます。
+
+# React.jsとTypeScript: 次のステップ
+
+---
+
+## 1. より高度なTypeScriptの機能の学習
+
+- Generics: 型の再利用性を高める
+  ```typescript
+  function identity<T>(arg: T): T {
+    return arg;
+  }
+  ```
+- Conditional Types: 条件に基づいて型を選択
+  ```typescript
+  type Check<T> = T extends string ? "string" : "not string";
+  ```
+- Mapped Types: 既存の型から新しい型を作成
+  ```typescript
+  type Readonly<T> = { readonly [P in keyof T]: T[P] };
+  ```
+
+---
+
+## 2. 状態管理ライブラリの探求
+
+- Redux: 予測可能な状態コンテナ
+  - 大規模アプリケーションに適している
+  - 豊富なミドルウェアエコシステム
+
+- MobX: シンプルで、スケーラブルな状態管理
+  - 反応的プログラミングモデル
+  - ボイラープレートが少ない
+
+- Recoil: Reactに特化した状態管理
+  - Atom-based
+  - React Suspenseとの親和性が高い
+
+---
+
+## 3. GraphQLとRESTの学習
+
+### REST (REpresentational State Transfer)
+- HTTPメソッドを使用してリソースを操作
+- エンドポイントベースのAPI設計
+- 利点:
+  - シンプルで直感的
+  - キャッシュが容易
+- 欠点:
+  - オーバーフェッチング/アンダーフェッチングの問題
+
+例:
+```javascript
+fetch('https://api.example.com/users/1')
+  .then(response => response.json())
+  .then(data => console.log(data));
+```
+
+---
+
+## 3. GraphQLとRESTの学習 (続き)
+
+### GraphQL
+- クエリ言語とランタイム
+- クライアントが必要なデータを正確に指定可能
+- Apollo Clientを使用した例:
+
+```javascript
+const GET_USER = gql`
+  query GetUser($id: ID!) {
+    user(id: $id) {
+      name
+      email
+    }
+  }
+`;
+
+const { loading, error, data } = useQuery(GET_USER, {
+  variables: { id: "1" },
+});
+```
+
+---
+
+## 4. マイクロフロントエンドアーキテクチャの探求
+
+- 大規模フロントエンドアプリケーションを小さな部分に分割
+- 利点:
+  - チーム間の独立した開発が可能
+  - 段階的なアップグレードが容易
+- 実装方法:
+  - iframeを使用
+  - Web Componentsを使用(おすすめ)
+  - Module Federationを使用 (Webpack 5)
+
+---
+
+## 5. CI/CDの構築
+
+デプロイって毎回やるの面倒ですよね。CI/CDを導入することで、自動化しましょう！
+
+- 継続的インテグレーション (CI):
+  - 自動テスト
+  - コード品質チェック
+- 継続的デリバリー/デプロイメント (CD):
+  - 自動ビルド
+  - 自動デプロイ
+- ツール:
+  - GitHub Actions
+  - GitLab CI/CD
+  - CircleCI
+
+---
+
+## 6. アクセシビリティ（a11y）と多言語化（i18n）
+
+### アクセシビリティ (a11y)
+- スクリーンリーダーの対応
+- キーボードナビゲーション
+- 色のコントラスト
+- WAI-ARIAの使用
+
+### 多言語化 (i18n)
+- react-intlやnext-i18nextの使用
+- 翻訳管理システムの導入
+- 右から左へ書く言語 (RTL) のサポート
+
+---
+
+## 実践的アプローチ
+
+**実際に何か作ってみるのが一番効率的！**
+
+1. 小規模プロジェクトから始める
+2. 学んだ技術を段階的に適用
+3. オープンソースプロジェクトへの貢献
+4. コードレビューを積極的に受ける
+5. 技術ブログの執筆や勉強会での発表
+
+---
+
+## まとめ
+
+- TypeScriptの高度な機能を習得
+- 適切な状態管理ライブラリを選択
+- RESTとGraphQLの違いを理解し、適材適所で使用
+- マイクロフロントエンドで大規模アプリケーションに対応
+- CI/CDでデプロイメントを自動化
+- アクセシビリティと多言語化で、より多くのユーザーに対応
+
+継続的な学習と実践が、スキル向上の鍵となる！
